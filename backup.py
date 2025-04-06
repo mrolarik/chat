@@ -20,43 +20,69 @@ SYSTEM_MESSAGE = {
     )
 }
 
-# 🗃️ session state
+# 📦 Session state
 if "all_chats" not in st.session_state:
     st.session_state.all_chats = {}
 
 if "current_chat" not in st.session_state:
     st.session_state.current_chat = "แชทใหม่"
 
-# 📥 หากยังไม่มีหัวข้อนี้ ให้สร้าง
 if st.session_state.current_chat not in st.session_state.all_chats:
     st.session_state.all_chats[st.session_state.current_chat] = [SYSTEM_MESSAGE]
-
-# 🧠 ดึงหัวข้อและบทสนทนา
-current_chat = st.session_state.current_chat
-chat_history = st.session_state.all_chats[current_chat]
 
 # 📂 Sidebar
 st.sidebar.title("📂 หัวข้อแชท")
 
-# ➕ เริ่มแชทใหม่
+# ➕ สร้างแชทใหม่
 if st.sidebar.button("➕ เริ่มแชทใหม่"):
     new_title = f"แชทเมื่อ {datetime.now().strftime('%H:%M:%S')}"
     st.session_state.all_chats[new_title] = [SYSTEM_MESSAGE]
     st.session_state.current_chat = new_title
     st.rerun()
 
-# 🔗 แสดงหัวข้อเป็นข้อความคลิกได้โดยใช้ st.markdown + st.button (หลอกเป็นลิงก์)
-for title in st.session_state.all_chats.keys():
-    if st.sidebar.button(f"📝 {title}", key=f"select-{title}"):
+# ✏️ ตัวแปรช่วยเปลี่ยนชื่อ
+if "renaming" not in st.session_state:
+    st.session_state.renaming = None
+
+# 🔁 แสดงรายการหัวข้อ
+for title in list(st.session_state.all_chats.keys()):
+    col1, col2, col3 = st.sidebar.columns([6, 1, 1])
+
+    # 📝 คลิกเพื่อเปลี่ยนหัวข้อ
+    if col1.button(title, key=f"title-{title}"):
         st.session_state.current_chat = title
+        st.session_state.renaming = None
         st.rerun()
 
-# 🧾 แสดงบทสนทนา
-for msg in chat_history[1:]:  # ข้าม system message
+    # ✏️ แสดงฟอร์มเปลี่ยนชื่อ
+    if title == st.session_state.current_chat and st.session_state.renaming == title:
+        new_name = st.sidebar.text_input("เปลี่ยนชื่อแชท", value=title, key="rename_input")
+        if st.sidebar.button("✅ ยืนยันการเปลี่ยนชื่อ"):
+            if new_name and new_name != title:
+                st.session_state.all_chats[new_name] = st.session_state.all_chats.pop(title)
+                st.session_state.current_chat = new_name
+            st.session_state.renaming = None
+            st.rerun()
+    elif col2.button("✏️", key=f"edit-{title}"):
+        st.session_state.renaming = title
+        st.rerun()
+
+    # 🗑️ ลบหัวข้อ
+    if col3.button("🗑️", key=f"delete-{title}"):
+        del st.session_state.all_chats[title]
+        if title == st.session_state.current_chat:
+            st.session_state.current_chat = next(iter(st.session_state.all_chats), "แชทใหม่")
+        st.rerun()
+
+# 🎯 โหลดแชทปัจจุบัน
+chat_history = st.session_state.all_chats[st.session_state.current_chat]
+
+# 📜 แสดงประวัติการสนทนา
+for msg in chat_history[1:]:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# ✍️ รับข้อความผู้ใช้
+# 💬 รับ input ใหม่
 if user_input := st.chat_input("พิมพ์ข้อความของคุณที่นี่..."):
     with st.chat_message("user"):
         st.markdown(user_input)
@@ -80,7 +106,7 @@ if user_input := st.chat_input("พิมพ์ข้อความของค
             if "choices" in res_json:
                 reply = res_json["choices"][0]["message"]["content"]
             else:
-                error_message = res_json.get("error", {}).get("message", "เกิดข้อผิดพลาดบางอย่างจาก API")
+                error_message = res_json.get("error", {}).get("message", "เกิดข้อผิดพลาดจาก API")
                 reply = f"❌ ไม่สามารถประมวลผลได้: {error_message}"
 
         except Exception as e:
