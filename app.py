@@ -4,13 +4,25 @@ import streamlit as st
 import requests
 from datetime import datetime
 
-# 🌐 CONFIG
+# 🛠️ ตั้งค่าหน้าเว็บ
 st.set_page_config(page_title="Groq Chatbot", page_icon="🤖")
-API_KEY = "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"  # 👈 เปลี่ยนตรงนี้
+
+# ✅ Header ตรึงบนสุด
+st.markdown("""
+    <div style="position: fixed; top: 0; left: 0; width: 100%; background-color: #f0f2f6;
+                padding: 1rem 1.5rem; font-size: 24px; font-weight: bold; color: #333;
+                z-index: 1000; border-bottom: 1px solid #ddd;">
+        🤖 Junior Chatbot
+    </div>
+    <div style="margin-top: 80px;"></div>
+""", unsafe_allow_html=True)
+
+# 🔐 Groq API
+API_KEY = "your-groq-api-key"  # 👈 ใส่ API Key จาก https://console.groq.com/keys
 API_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL = "llama3-8b-8192"
 
-# 🌟 system prompt
+# 🌟 System message
 SYSTEM_MESSAGE = {
     "role": "system",
     "content": (
@@ -20,7 +32,7 @@ SYSTEM_MESSAGE = {
     )
 }
 
-# 📦 Session state
+# 📦 Session state setup
 if "all_chats" not in st.session_state:
     st.session_state.all_chats = {}
 
@@ -30,31 +42,33 @@ if "current_chat" not in st.session_state:
 if st.session_state.current_chat not in st.session_state.all_chats:
     st.session_state.all_chats[st.session_state.current_chat] = [SYSTEM_MESSAGE]
 
+if "renaming" not in st.session_state:
+    st.session_state.renaming = None
+
+# 🎯 ดึงประวัติ
+current_chat = st.session_state.current_chat
+chat_history = st.session_state.all_chats[current_chat]
+
 # 📂 Sidebar
 st.sidebar.title("📂 หัวข้อแชท")
 
-# ➕ สร้างแชทใหม่
+# ➕ เริ่มแชทใหม่
 if st.sidebar.button("➕ เริ่มแชทใหม่"):
     new_title = f"แชทเมื่อ {datetime.now().strftime('%H:%M:%S')}"
     st.session_state.all_chats[new_title] = [SYSTEM_MESSAGE]
     st.session_state.current_chat = new_title
     st.rerun()
 
-# ✏️ ตัวแปรช่วยเปลี่ยนชื่อ
-if "renaming" not in st.session_state:
-    st.session_state.renaming = None
-
-# 🔁 แสดงรายการหัวข้อ
+# 🔁 แสดงรายการหัวข้อพร้อม ✏️/🗑️
 for title in list(st.session_state.all_chats.keys()):
     col1, col2, col3 = st.sidebar.columns([6, 1, 1])
 
-    # 📝 คลิกเพื่อเปลี่ยนหัวข้อ
     if col1.button(title, key=f"title-{title}"):
         st.session_state.current_chat = title
         st.session_state.renaming = None
         st.rerun()
 
-    # ✏️ แสดงฟอร์มเปลี่ยนชื่อ
+    # ✏️ แก้ชื่อ
     if title == st.session_state.current_chat and st.session_state.renaming == title:
         new_name = st.sidebar.text_input("เปลี่ยนชื่อแชท", value=title, key="rename_input")
         if st.sidebar.button("✅ ยืนยันการเปลี่ยนชื่อ"):
@@ -74,15 +88,12 @@ for title in list(st.session_state.all_chats.keys()):
             st.session_state.current_chat = next(iter(st.session_state.all_chats), "แชทใหม่")
         st.rerun()
 
-# 🎯 โหลดแชทปัจจุบัน
-chat_history = st.session_state.all_chats[st.session_state.current_chat]
-
-# 📜 แสดงประวัติการสนทนา
+# 💬 แสดงบทสนทนา
 for msg in chat_history[1:]:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# 💬 รับ input ใหม่
+# 📥 รับข้อความผู้ใช้
 if user_input := st.chat_input("พิมพ์ข้อความของคุณที่นี่..."):
     with st.chat_message("user"):
         st.markdown(user_input)
@@ -115,5 +126,3 @@ if user_input := st.chat_input("พิมพ์ข้อความของค
     with st.chat_message("assistant"):
         st.markdown(reply)
     chat_history.append({"role": "assistant", "content": reply})
-
-
