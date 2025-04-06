@@ -8,32 +8,21 @@ import re
 from PyPDF2 import PdfReader
 import pandas as pd
 
-# 🌐 ตั้งค่า Streamlit
+# ตั้งค่า Streamlit
 st.set_page_config(page_title="Groq Chatbot", page_icon="🤖")
 
-# ✅ Header ตรึงบนสุดแบบตรงกลาง
-#st.markdown("""
-#    <div style="position: fixed; top: 189px; left: 0; width: 100%; background-color: #f0f2f6;
-#                display: flex; justify-content: center; align-items: center;
-#                padding: 1rem 1.5rem; font-size: 24px; font-weight: bold; color: #333;
-#                z-index: 1000; border-bottom: 1px solid #ddd;">
-#        🤖 Junior Chatbot
-#    </div>
-#    <div style="margin-top: 250px;"></div>
-#""", unsafe_allow_html=True)
-
 # 🔐 Groq API
-API_KEY = "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"  # 👈 เปลี่ยนตรงนี้
+API_KEY = "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"
 API_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL = "llama3-8b-8192"
 
-# 🧠 SYSTEM MESSAGE
+# SYSTEM PROMPT
 SYSTEM_MESSAGE = {
     "role": "system",
     "content": "คุณคือผู้ช่วยที่เป็นมิตรและมีประโยชน์ ตอบคำถามตามที่ผู้ใช้ถาม"
 }
 
-# 📦 เตรียม session state
+# Session state setup
 if "all_chats" not in st.session_state:
     st.session_state.all_chats = {}
 
@@ -52,7 +41,7 @@ if st.session_state.current_chat not in st.session_state.all_chats:
 if "renaming" not in st.session_state:
     st.session_state.renaming = None
 
-# Sidebar Header
+# Sidebar
 st.sidebar.title("🤖 Junior Chatbot")
 st.sidebar.markdown("---")
 st.sidebar.markdown("📂 หัวข้อแชท", unsafe_allow_html=True)
@@ -82,7 +71,6 @@ for title in list(st.session_state.all_chats.keys()):
             st.session_state.current_chat = next(iter(st.session_state.all_chats), "แชทใหม่")
         st.rerun()
 
-# ✏️ เปลี่ยนชื่อหัวข้อ
 if st.session_state.renaming == st.session_state.current_chat:
     new_name = st.sidebar.text_input("เปลี่ยนชื่อหัวข้อ", value=st.session_state.current_chat)
     if st.sidebar.button("✅ ยืนยันการเปลี่ยนชื่อ"):
@@ -95,11 +83,11 @@ if st.session_state.renaming == st.session_state.current_chat:
         st.session_state.renaming = None
         st.rerun()
 
-# 📜 โหลดบทสนทนา
+# โหลดประวัติแชท
 chat_id = st.session_state.current_chat
 chat_history = st.session_state.all_chats[chat_id]
 
-# 📎 อัปโหลดไฟล์หลายไฟล์และสรุป
+# อัปโหลดไฟล์และสรุป
 st.markdown("#### 📎 อัปโหลดไฟล์ (PDF หรือ CSV) สำหรับหัวข้อนี้")
 uploaded_files = st.file_uploader("เลือกไฟล์", type=["pdf", "csv"], accept_multiple_files=True, key=chat_id)
 
@@ -120,7 +108,6 @@ if uploaded_files:
 
         all_text += f"\n--- จากไฟล์: {file.name} ---\n{text[:3000]}\n"
 
-        # 🧠 สรุปใจความของไฟล์
         with st.spinner(f"🤖 กำลังสรุป {file.name}..."):
             headers = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
             payload = {
@@ -154,42 +141,55 @@ if uploaded_files:
     st.session_state.chat_summaries[chat_id] = summaries
     st.success("✅ อัปโหลดและสรุปไฟล์ทั้งหมดสำเร็จแล้ว")
 
-# ✅ แสดงสรุปที่เคยอัปโหลด
-#if chat_id in st.session_state.chat_summaries:
-#    st.markdown("### 📄 สรุปไฟล์ที่อัปโหลดก่อนหน้า")
-#    for fname, summary in st.session_state.chat_summaries[chat_id].items():
-#        st.markdown(f"**{fname}**\n\n{summary}")
+# ตรวจภาษา
 
-# ✅ ตรวจภาษา
 def is_english(text):
     return re.match(r'^[a-zA-Z0-9\s\.,!?]+$', text.strip()) is not None
 
-# 🤖 แนะนำตัวครั้งแรก
-# แสดงแนะนำตัวเฉพาะเมื่อยังไม่มี assistant ตอบเลย
+# สร้างข้อความแนะนำตัวแบบสุ่ม
+thai_greetings = [
+    "สวัสดีครับ! ฉันคือ junior Chatbot 😊 ยินดีช่วยเหลือคุณทุกเรื่องเลยครับ",
+    "สวัสดีครับ! ฉันชื่อ junior Chatbot 🤖 พร้อมช่วยคุณตอบคำถามทุกด้าน",
+    "สวัสดีครับ! junior Chatbot อยู่ตรงนี้แล้วนะครับ 🙌 ถามมาได้เลย"
+]
+eng_greetings = [
+    "Hello! I am junior Chatbot 😊 How can I assist you today?",
+    "Hi there! This is junior Chatbot 🤖 Ask me anything!",
+    "Hey! I'm junior Chatbot 🙌 Ready to help!"
+]
+msg = st.session_state.get("last_user_msg", "")
+intro = random.choice(eng_greetings if is_english(msg) else thai_greetings)
+
+# แนะนำตัวครั้งแรก ถ้ายังไม่มี assistant ตอบเลย
 if len(chat_history) == 1 or not any(m["role"] == "assistant" for m in chat_history[1:]):
     with st.chat_message("assistant"):
         st.markdown(intro)
     chat_history.append({"role": "assistant", "content": intro})
 
-# แสดงบทสนทนา
+# แสดงประวัติแชท
 for msg in chat_history[1:]:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# ✍️ รับข้อความผู้ใช้
-if user_input := st.chat_input("พิมพ์ข้อความของคุณที่นี่..."):
+# กล่อง input + ป้ายชื่อ
+col1, col2 = st.columns([1, 5])
+with col1:
+    st.markdown("**🤖 Junior Chatbot**")
+
+with col2:
+    user_input = st.chat_input("พิมพ์ข้อความของคุณที่นี่...")
+
+if user_input:
     st.session_state.last_user_msg = user_input
     with st.chat_message("user"):
         st.markdown(user_input)
     chat_history.append({"role": "user", "content": user_input})
 
-    # ใช้ข้อมูลจากไฟล์ (ถ้ามี)
     file_context = st.session_state.chat_files.get(chat_id, "")
     if file_context:
         sys_msg = {
             "role": "system",
-            "content": f"""คุณจะได้รับข้อมูลจากเอกสารที่อัปโหลดดังนี้:\n\n{file_context[:3000]}\n\n
-            โปรดตอบคำถามโดยอ้างอิงจากข้อมูลข้างต้นเท่านั้น หากไม่มีข้อมูลในเอกสารให้ตอบว่า "ไม่พบข้อมูลที่เกี่ยวข้องในเอกสาร"."""
+            "content": f"""คุณจะได้รับข้อมูลจากเอกสารที่อัปโหลดดังนี้:\n\n{file_context[:3000]}\n\nโปรดตอบคำถามโดยอ้างอิงจากข้อมูลข้างต้นเท่านั้น หากไม่มีข้อมูลในเอกสารให้ตอบว่า \"ไม่พบข้อมูลที่เกี่ยวข้องในเอกสาร\"."""
         }
         full_messages = [sys_msg] + chat_history[1:]
     else:
@@ -198,7 +198,6 @@ if user_input := st.chat_input("พิมพ์ข้อความของค
     with st.spinner("กำลังคิดคำตอบ..."):
         headers = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
         payload = {"model": MODEL, "messages": full_messages, "temperature": 0.7}
-
         try:
             res = requests.post(API_URL, headers=headers, json=payload)
             reply = res.json()["choices"][0]["message"]["content"]
@@ -208,5 +207,3 @@ if user_input := st.chat_input("พิมพ์ข้อความของค
     with st.chat_message("assistant"):
         st.markdown(reply)
     chat_history.append({"role": "assistant", "content": reply})
-
-
