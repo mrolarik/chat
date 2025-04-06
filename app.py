@@ -120,6 +120,7 @@ if uploaded_files:
         all_text += f"\n--- จากไฟล์: {file.name} ---\n{text[:3000]}\n"
 
         # 🧠 สรุปใจความของไฟล์
+        st.markdown("#### 🧠 สรุปใจความสำคัญของไฟล์ที่อัปโหลด")
         with st.spinner(f"🤖 กำลังสรุป {file.name}..."):
             headers = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
             payload = {
