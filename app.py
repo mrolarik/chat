@@ -154,10 +154,10 @@ if uploaded_files:
     st.success("✅ อัปโหลดและสรุปไฟล์ทั้งหมดสำเร็จแล้ว")
 
 # ✅ แสดงสรุปที่เคยอัปโหลด
-if chat_id in st.session_state.chat_summaries:
-    st.markdown("### 📄 สรุปไฟล์ที่อัปโหลดก่อนหน้า")
-    for fname, summary in st.session_state.chat_summaries[chat_id].items():
-        st.markdown(f"**{fname}**\n\n{summary}")
+#if chat_id in st.session_state.chat_summaries:
+#    st.markdown("### 📄 สรุปไฟล์ที่อัปโหลดก่อนหน้า")
+#    for fname, summary in st.session_state.chat_summaries[chat_id].items():
+#        st.markdown(f"**{fname}**\n\n{summary}")
 
 # ✅ ตรวจภาษา
 def is_english(text):
