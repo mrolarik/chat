@@ -12,15 +12,15 @@ import pandas as pd
 st.set_page_config(page_title="Groq Chatbot", page_icon="🤖")
 
 # ตรึงหัวเรื่องไว้ด้านบน
-#st.markdown("""
-#    <div style="position: fixed; top: 189px; left: 0; width: 100%; background-color: #f0f2f6;
-#                display: flex; justify-content: center; align-items: center;
-#                padding: 1rem 1.5rem; font-size: 24px; font-weight: bold; color: #333;
-#                z-index: 1000; border-bottom: 1px solid #ddd;">
-#        🤖 Junior Chatbot
-#    </div>
-#    <div style="margin-top: 250px;"></div>
-#""", unsafe_allow_html=True)
+st.markdown("""
+    <div style="position: fixed; top: 189px; left: 0; width: 100%; background-color: #f0f2f6;
+                display: flex; justify-content: center; align-items: center;
+                padding: 1rem 1.5rem; font-size: 24px; font-weight: bold; color: #333;
+                z-index: 1000; border-bottom: 1px solid #ddd;">
+        🤖 Junior Chatbot
+    </div>
+    <div style="margin-top: 250px;"></div>
+""", unsafe_allow_html=True)
 
 # Groq API
 API_KEY = "your-groq-api-key"  # 👈 ใส่ API Key ของคุณ
