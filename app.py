@@ -1,40 +1,46 @@
-#API_KEY = "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""  # 👉 เปลี่ยนตรงนี้
+#API_KEY = "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"  # 👉 เปลี่ยนตรงนี้
 
 import streamlit as st
 import requests
 
 # ตั้งค่า Streamlit
 st.set_page_config(page_title="Groq Chatbot", page_icon="🤖")
-st.title("🤖 Chatbot ด้วย LLaMA3 + Groq API")
+st.title("🤖 junior Chatbot ด้วย LLaMA3 + Groq API")
 
-# กำหนด API Key และ Endpoint
-API_KEY = "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"  # 👉 เปลี่ยนตรงนี้
+# 🛠️ ตั้งค่า API Key และ Model
+API_KEY = "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"  # ← เปลี่ยนเป็นของคุณ
 API_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL = "llama3-8b-8192"
 
-# เก็บประวัติการสนทนาใน session
-st.session_state.messages = [
-    {
-        "role": "system",
-        "content": (
-            "คุณคือผู้ช่วยที่เป็นมิตรและมีประโยชน์ "
-            "หากมีการเริ่มต้นบทสนทนา ให้แนะนำตัวว่า 'สวัสดีครับ! ฉันชื่อ junior Chatbot "
-            "ผู้ช่วยที่พร้อมจะตอบคำถามและช่วยเหลือคุณในเรื่องต่างๆ'"
-        )
-    }
-]
+# 🌟 เริ่ม session ด้วย system message และบทนำ
+if "messages" not in st.session_state:
+    st.session_state.messages = [
+        {
+            "role": "system",
+            "content": (
+                "คุณคือผู้ช่วยที่เป็นมิตรและมีประโยชน์ "
+                "เมื่อเริ่มต้นการสนทนา ให้แนะนำตัวว่า "
+                "'สวัสดีครับ! ฉันชื่อ junior Chatbot ผู้ช่วยที่พร้อมจะตอบคำถามและช่วยเหลือคุณในเรื่องต่างๆ'"
+            )
+        }
+    ]
 
-# แสดงประวัติ
+# 🔁 แสดงประวัติการสนทนาทั้งหมด
 for msg in st.session_state.messages[1:]:  # ข้าม system message
-    st.chat_message(msg["role"]).markdown(msg["content"])
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
 
-# รับข้อความใหม่จากผู้ใช้
-if user_input := st.chat_input("พิมพ์ข้อความของคุณที่นี่"):
-    st.chat_message("user").markdown(user_input)
+# 🧠 รอรับ input จากผู้ใช้
+if user_input := st.chat_input("พิมพ์คำถามของคุณที่นี่..."):
+    # แสดงคำถามของผู้ใช้
+    with st.chat_message("user"):
+        st.markdown(user_input)
+
+    # บันทึกลงในประวัติ
     st.session_state.messages.append({"role": "user", "content": user_input})
 
-    # เรียก Groq API
-    with st.spinner("กำลังคิด..."):
+    # เรียก API จาก Groq
+    with st.spinner("กำลังคิดคำตอบ..."):
         headers = {
             "Authorization": f"Bearer {API_KEY}",
             "Content-Type": "application/json",
@@ -48,5 +54,10 @@ if user_input := st.chat_input("พิมพ์ข้อความของค
         response = requests.post(API_URL, headers=headers, json=payload)
         reply = response.json()["choices"][0]["message"]["content"]
 
-    st.chat_message("assistant").markdown(reply)
+    # แสดงคำตอบจากบอท
+    with st.chat_message("assistant"):
+        st.markdown(reply)
+
+    # บันทึกคำตอบลงในประวัติ
     st.session_state.messages.append({"role": "assistant", "content": reply})
+
