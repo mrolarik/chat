@@ -171,7 +171,23 @@ for msg in chat_history[1:]:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# รับข้อความผู้ใช้
+# รับข้อความผู้ใช้ - วางไว้ด้านล่างสุดเสมอ
+st.markdown("""
+<style>
+    div[data-testid="stChatInput"] {
+        position: fixed;
+        bottom: 1rem;
+        left: 3.5rem;
+        right: 1rem;
+        background: white;
+        z-index: 100;
+        box-shadow: 0px -2px 6px rgba(0, 0, 0, 0.1);
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 col1, col2 = st.columns([1, 5])
 with col1:
     st.markdown("**🤖 Junior Chatbot**")
