@@ -126,7 +126,7 @@ if uploaded_files:
                     {"role": "system", "content": "คุณคือผู้ช่วยที่สรุปเอกสารเก่งและกระชับ"},
                     {"role": "user", "content": f"กรุณาสรุปใจความสำคัญของไฟล์นี้:\n\n{text[:3000]}"}
                 ],
-                "temperature": 0.3,
+                ...
             }
             try:
                 res = requests.post(API_URL, headers=headers, json=payload)
