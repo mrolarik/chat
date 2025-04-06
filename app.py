@@ -13,7 +13,7 @@ st.set_page_config(page_title="Groq Chatbot", page_icon="🤖")
 
 # ✅ Header ตรึงบนสุดแบบตรงกลาง
 st.markdown("""
-    <div style="position: fixed; top: 40; left: 0; width: 100%; background-color: #ffffff;
+    <div style="position: fixed; top: 30; left: 0; width: 100%; background-color: #ffffff;
                 display: flex; justify-content: center; align-items: center;
                 padding: 1rem 1.5rem; font-size: 24px; font-weight: bold; color: #333;
                 z-index: 1000; border-bottom: 1px solid #ddd;">
