@@ -6,11 +6,11 @@ from datetime import datetime
 
 # 🌐 CONFIG
 st.set_page_config(page_title="Groq Chatbot", page_icon="🤖")
-API_KEY = "your-groq-api-key"  # 👈 ใส่ API Key จาก https://console.groq.com/keys
+API_KEY = "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"  # 👈 เปลี่ยนตรงนี้
 API_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL = "llama3-8b-8192"
 
-# 🧠 ค่าเริ่มต้นสำหรับระบบ
+# 🌟 system prompt
 SYSTEM_MESSAGE = {
     "role": "system",
     "content": (
@@ -20,49 +20,48 @@ SYSTEM_MESSAGE = {
     )
 }
 
-# 🗃️ สร้างโครงสร้างเก็บหัวข้อแชทและสถานะปัจจุบัน
+# 🗃️ session state
 if "all_chats" not in st.session_state:
     st.session_state.all_chats = {}
 
 if "current_chat" not in st.session_state:
     st.session_state.current_chat = "แชทใหม่"
 
-# 📌 เริ่ม Sidebar
+# 📥 หากยังไม่มีหัวข้อนี้ ให้สร้าง
+if st.session_state.current_chat not in st.session_state.all_chats:
+    st.session_state.all_chats[st.session_state.current_chat] = [SYSTEM_MESSAGE]
+
+# 🧠 ดึงหัวข้อและบทสนทนา
+current_chat = st.session_state.current_chat
+chat_history = st.session_state.all_chats[current_chat]
+
+# 📂 Sidebar
 st.sidebar.title("📂 หัวข้อแชท")
 
-# ➕ ปุ่มเริ่มแชทใหม่
+# ➕ เริ่มแชทใหม่
 if st.sidebar.button("➕ เริ่มแชทใหม่"):
     new_title = f"แชทเมื่อ {datetime.now().strftime('%H:%M:%S')}"
     st.session_state.all_chats[new_title] = [SYSTEM_MESSAGE]
     st.session_state.current_chat = new_title
     st.rerun()
 
-# 🔘 แสดงทุกหัวข้อเป็นปุ่ม
+# 🔗 แสดงหัวข้อเป็นข้อความคลิกได้โดยใช้ st.markdown + st.button (หลอกเป็นลิงก์)
 for title in st.session_state.all_chats.keys():
-    if st.sidebar.button(title):
+    if st.sidebar.button(f"📝 {title}", key=f"select-{title}"):
         st.session_state.current_chat = title
         st.rerun()
 
-# 📥 หากยังไม่มีหัวข้อนี้ใน all_chats ให้สร้างใหม่
-if st.session_state.current_chat not in st.session_state.all_chats:
-    st.session_state.all_chats[st.session_state.current_chat] = [SYSTEM_MESSAGE]
-
-# ✅ โหลดประวัติของหัวข้อปัจจุบัน
-chat_history = st.session_state.all_chats[st.session_state.current_chat]
-
-# 📜 แสดงบทสนทนาย้อนหลัง
+# 🧾 แสดงบทสนทนา
 for msg in chat_history[1:]:  # ข้าม system message
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# 💬 รับ input ใหม่
+# ✍️ รับข้อความผู้ใช้
 if user_input := st.chat_input("พิมพ์ข้อความของคุณที่นี่..."):
     with st.chat_message("user"):
         st.markdown(user_input)
-
     chat_history.append({"role": "user", "content": user_input})
 
-    # 🔄 เรียก Groq API
     with st.spinner("กำลังคิดคำตอบ..."):
         headers = {
             "Authorization": f"Bearer {API_KEY}",
@@ -89,5 +88,4 @@ if user_input := st.chat_input("พิมพ์ข้อความของค
 
     with st.chat_message("assistant"):
         st.markdown(reply)
-
     chat_history.append({"role": "assistant", "content": reply})
