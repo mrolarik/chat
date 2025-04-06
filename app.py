@@ -6,7 +6,7 @@ from datetime import datetime
 
 # 🌐 CONFIG
 st.set_page_config(page_title="Groq Chatbot", page_icon="🤖")
-API_KEY = "your-groq-api-key"  # 👈 เปลี่ยนตรงนี้
+API_KEY = "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"  # 👈 เปลี่ยนตรงนี้
 API_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL = "llama3-8b-8192"
 
