@@ -19,7 +19,7 @@ st.markdown("""
                 z-index: 1000; border-bottom: 1px solid #ddd;">
         🤖 Junior Chatbot
     </div>
-    <div style="margin-top: 30px;"></div>
+    <div style="margin-top: 5px;"></div>
 """, unsafe_allow_html=True)
 
 # 🔐 Groq API
