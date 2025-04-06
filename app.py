@@ -3,7 +3,6 @@
 import streamlit as st
 import requests
 from datetime import datetime
-from urllib.parse import quote
 
 # 🌐 CONFIG
 st.set_page_config(page_title="Groq Chatbot", page_icon="🤖")
@@ -21,45 +20,46 @@ SYSTEM_MESSAGE = {
     )
 }
 
-# 📦 Session state
+# 🗃️ session state
 if "all_chats" not in st.session_state:
     st.session_state.all_chats = {}
 
-query_params = st.query_params
-current_chat = query_params.get("chat", "แชทใหม่")
+if "current_chat" not in st.session_state:
+    st.session_state.current_chat = "แชทใหม่"
 
-# 📥 ถ้ายังไม่มี chat นี้ ให้สร้างใหม่
-if current_chat not in st.session_state.all_chats:
-    st.session_state.all_chats[current_chat] = [SYSTEM_MESSAGE]
+# 📥 หากยังไม่มีหัวข้อนี้ ให้สร้าง
+if st.session_state.current_chat not in st.session_state.all_chats:
+    st.session_state.all_chats[st.session_state.current_chat] = [SYSTEM_MESSAGE]
 
-# 📌 Sidebar
+# 🧠 ดึงหัวข้อและบทสนทนา
+current_chat = st.session_state.current_chat
+chat_history = st.session_state.all_chats[current_chat]
+
+# 📂 Sidebar
 st.sidebar.title("📂 หัวข้อแชท")
 
 # ➕ เริ่มแชทใหม่
 if st.sidebar.button("➕ เริ่มแชทใหม่"):
     new_title = f"แชทเมื่อ {datetime.now().strftime('%H:%M:%S')}"
     st.session_state.all_chats[new_title] = [SYSTEM_MESSAGE]
-    st.query_params["chat"] = new_title
+    st.session_state.current_chat = new_title
     st.rerun()
 
-# 🔗 แสดงหัวข้อทั้งหมดเป็นข้อความที่คลิกได้
+# 🔗 แสดงหัวข้อเป็นข้อความคลิกได้โดยใช้ st.markdown + st.button (หลอกเป็นลิงก์)
 for title in st.session_state.all_chats.keys():
-    url_title = quote(title)
-    st.sidebar.markdown(f" [{title}](?chat={url_title})")
+    if st.sidebar.button(f"📝 {title}", key=f"select-{title}"):
+        st.session_state.current_chat = title
+        st.rerun()
 
-# ✅ โหลดประวัติแชท
-chat_history = st.session_state.all_chats[current_chat]
-
-# 💬 แสดงประวัติการคุย
+# 🧾 แสดงบทสนทนา
 for msg in chat_history[1:]:  # ข้าม system message
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# 📩 รับ input ใหม่
+# ✍️ รับข้อความผู้ใช้
 if user_input := st.chat_input("พิมพ์ข้อความของคุณที่นี่..."):
     with st.chat_message("user"):
         st.markdown(user_input)
-
     chat_history.append({"role": "user", "content": user_input})
 
     with st.spinner("กำลังคิดคำตอบ..."):
@@ -88,5 +88,5 @@ if user_input := st.chat_input("พิมพ์ข้อความของค
 
     with st.chat_message("assistant"):
         st.markdown(reply)
-
     chat_history.append({"role": "assistant", "content": reply})
+
