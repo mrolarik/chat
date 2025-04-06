@@ -89,8 +89,8 @@ chat_id = st.session_state.current_chat
 chat_history = st.session_state.all_chats[chat_id]
 
 # 📂 อัปโหลดไฟล์
-st.markdown("#### 🤖 Junior Chatbot")
-st.markdown("## 📎 อัปโหลดไฟล์ (PDF หรือ CSV) สำหรับหัวข้อนี้")
+st.markdown("## 🤖 Junior Chatbot")
+st.markdown("#### 📎 อัปโหลดไฟล์ (PDF หรือ CSV) สำหรับหัวข้อนี้")
 uploaded_files = st.file_uploader("เลือกไฟล์", type=["pdf", "csv"], accept_multiple_files=True, key=chat_id)
 
 summaries = {}
