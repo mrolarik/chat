@@ -8,32 +8,32 @@ import re
 from PyPDF2 import PdfReader
 import pandas as pd
 
-# 🌐 ตั้งค่า Streamlit
+# ตั้งค่าหน้าเว็บ
 st.set_page_config(page_title="Groq Chatbot", page_icon="🤖")
 
-# ✅ Header ตรึงบนสุดแบบตรงกลาง
+# ตรึงหัวเรื่องไว้ด้านบน
 #st.markdown("""
-#    <div style="position: fixed; top: 10; left: 0; width: 100%; background-color: #ffffff;
+#    <div style="position: fixed; top: 189px; left: 0; width: 100%; background-color: #f0f2f6;
 #                display: flex; justify-content: center; align-items: center;
 #                padding: 1rem 1.5rem; font-size: 24px; font-weight: bold; color: #333;
 #                z-index: 1000; border-bottom: 1px solid #ddd;">
 #        🤖 Junior Chatbot
 #    </div>
-#<div style="margin-top: 25px;"></div>
+#    <div style="margin-top: 250px;"></div>
 #""", unsafe_allow_html=True)
 
-# 🔐 Groq API
-API_KEY = "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"  # 👈 เปลี่ยนตรงนี้
+# Groq API
+API_KEY = "your-groq-api-key"  # 👈 ใส่ API Key ของคุณ
 API_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL = "llama3-8b-8192"
 
-# 🧠 SYSTEM MESSAGE
+# System prompt
 SYSTEM_MESSAGE = {
     "role": "system",
     "content": "คุณคือผู้ช่วยที่เป็นมิตรและมีประโยชน์ ตอบคำถามตามที่ผู้ใช้ถาม"
 }
 
-# 📦 เตรียม session state
+# Session state
 if "all_chats" not in st.session_state:
     st.session_state.all_chats = {}
 
@@ -52,7 +52,7 @@ if st.session_state.current_chat not in st.session_state.all_chats:
 if "renaming" not in st.session_state:
     st.session_state.renaming = None
 
-# 📂 Sidebar: หัวข้อแชท
+# Sidebar
 st.sidebar.title("📂 หัวข้อแชท")
 
 if st.sidebar.button("➕ เริ่มแชทใหม่"):
@@ -80,7 +80,7 @@ for title in list(st.session_state.all_chats.keys()):
             st.session_state.current_chat = next(iter(st.session_state.all_chats), "แชทใหม่")
         st.rerun()
 
-# ✏️ เปลี่ยนชื่อหัวข้อ
+# เปลี่ยนชื่อหัวข้อ
 if st.session_state.renaming == st.session_state.current_chat:
     new_name = st.sidebar.text_input("เปลี่ยนชื่อหัวข้อ", value=st.session_state.current_chat)
     if st.sidebar.button("✅ ยืนยันการเปลี่ยนชื่อ"):
@@ -93,11 +93,11 @@ if st.session_state.renaming == st.session_state.current_chat:
         st.session_state.renaming = None
         st.rerun()
 
-# 📜 โหลดบทสนทนา
+# โหลดบทสนทนา
 chat_id = st.session_state.current_chat
 chat_history = st.session_state.all_chats[chat_id]
 
-# 📎 อัปโหลดไฟล์หลายไฟล์และสรุป
+# 📎 อัปโหลดและสรุปไฟล์
 st.markdown("#### 📎 อัปโหลดไฟล์ (PDF หรือ CSV) สำหรับหัวข้อนี้")
 uploaded_files = st.file_uploader("เลือกไฟล์", type=["pdf", "csv"], accept_multiple_files=True, key=chat_id)
 
@@ -117,7 +117,7 @@ if uploaded_files:
 
         all_text += f"\n--- จากไฟล์: {file.name} ---\n{text[:3000]}\n"
 
-        # 🧠 สรุปใจความของไฟล์
+        # 🧠 สรุปภาษาไทย
         with st.spinner(f"🤖 กำลังสรุป {file.name}..."):
             headers = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
             payload = {
@@ -138,7 +138,6 @@ if uploaded_files:
                 ],
                 "temperature": 0.3,
             }
-
             try:
                 res = requests.post(API_URL, headers=headers, json=payload)
                 summary = res.json()["choices"][0]["message"]["content"]
@@ -152,17 +151,17 @@ if uploaded_files:
     st.session_state.chat_summaries[chat_id] = summaries
     st.success("✅ อัปโหลดและสรุปไฟล์ทั้งหมดสำเร็จแล้ว")
 
-# ✅ แสดงสรุปที่เคยอัปโหลด
+# แสดงสรุปที่อัปโหลดไว้แล้ว
 if chat_id in st.session_state.chat_summaries:
     st.markdown("### 📄 สรุปไฟล์ที่อัปโหลดก่อนหน้า")
     for fname, summary in st.session_state.chat_summaries[chat_id].items():
         st.markdown(f"**{fname}**\n\n{summary}")
 
-# ✅ ตรวจภาษา
+# ตรวจภาษา
 def is_english(text):
     return re.match(r'^[a-zA-Z0-9\s\.,!?]+$', text.strip()) is not None
 
-# 🤖 แนะนำตัวครั้งแรก
+# แนะนำตัวครั้งแรก
 if len(chat_history) == 1:
     thai_greetings = [
         "สวัสดีครับ! ฉันคือ junior Chatbot 😊 ยินดีช่วยเหลือคุณทุกเรื่องเลยครับ",
@@ -180,20 +179,27 @@ if len(chat_history) == 1:
         st.markdown(intro)
     chat_history.append({"role": "assistant", "content": intro})
 
-# แสดงบทสนทนา
+# แสดงประวัติแชท
 for msg in chat_history[1:]:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# ✍️ รับข้อความผู้ใช้
-st.markdown("Chatbot")
-if user_input := st.chat_input("พิมพ์ข้อความของคุณที่นี่..."):
+# ✅ ช่องป้อนข้อความ + ชื่อบอทด้านซ้าย
+col1, col2 = st.columns([1, 5])
+with col1:
+    st.markdown("**🤖 Junior Chatbot**")
+
+with col2:
+    user_input = st.chat_input("พิมพ์ข้อความของคุณที่นี่...")
+
+# เมื่อผู้ใช้กรอกข้อความ
+if user_input:
     st.session_state.last_user_msg = user_input
     with st.chat_message("user"):
         st.markdown(user_input)
     chat_history.append({"role": "user", "content": user_input})
 
-    # ใช้ข้อมูลจากไฟล์ (ถ้ามี)
+    # เตรียมข้อความส่ง
     file_context = st.session_state.chat_files.get(chat_id, "")
     if file_context:
         sys_msg = {
@@ -208,7 +214,6 @@ if user_input := st.chat_input("พิมพ์ข้อความของค
     with st.spinner("กำลังคิดคำตอบ..."):
         headers = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
         payload = {"model": MODEL, "messages": full_messages, "temperature": 0.7}
-
         try:
             res = requests.post(API_URL, headers=headers, json=payload)
             reply = res.json()["choices"][0]["message"]["content"]
@@ -218,5 +223,6 @@ if user_input := st.chat_input("พิมพ์ข้อความของค
     with st.chat_message("assistant"):
         st.markdown(reply)
     chat_history.append({"role": "assistant", "content": reply})
+
 
 
