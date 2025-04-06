@@ -20,7 +20,7 @@ st.set_page_config(page_title="Groq Chatbot", page_icon="🤖")
 #        🤖 Junior Chatbot
 #    </div>
 #<div style="margin-top: 25px;"></div>
-""", unsafe_allow_html=True)
+#""", unsafe_allow_html=True)
 
 # 🔐 Groq API
 API_KEY = "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"  # 👈 เปลี่ยนตรงนี้
