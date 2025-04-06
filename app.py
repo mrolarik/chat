@@ -172,7 +172,7 @@ for msg in chat_history[1:]:
         st.markdown(msg["content"])
 
 # ✍️ รับข้อความผู้ใช้
-if user_input := st.chat_input("พิมพ์ข้อความของคุณที่นี่..."):
+if user_input := st.chat_input("🤖 Junior Chatbot: พิมพ์ข้อความของคุณที่นี่..."):
     st.session_state.last_user_msg = user_input
     with st.chat_message("user"):
         st.markdown(user_input)
