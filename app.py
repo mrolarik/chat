@@ -171,41 +171,20 @@ for msg in chat_history[1:]:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# รับข้อความผู้ใช้ - วางไว้ด้านล่างสุดเสมอ
-st.markdown("""
-<style>
-    div[data-testid="stChatInput"] {
-        position: fixed;
-        bottom: 1rem;
-        left: 3.5rem;
-        right: 1rem;
-        background: white;
-        z-index: 100;
-        box-shadow: 0px -2px 6px rgba(0, 0, 0, 0.1);
-        padding: 0.5rem;
-        border-radius: 0.5rem;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-col1, col2 = st.columns([1, 5])
-with col1:
-    st.markdown("**🤖 Junior Chatbot**")
-
-with col2:
-    user_input = st.chat_input("พิมพ์ข้อความของคุณที่นี่...")
-
-if user_input:
+# ✍️ รับข้อความผู้ใช้
+if user_input := st.chat_input("พิมพ์ข้อความของคุณที่นี่..."):
     st.session_state.last_user_msg = user_input
     with st.chat_message("user"):
         st.markdown(user_input)
     chat_history.append({"role": "user", "content": user_input})
 
+    # ใช้ข้อมูลจากไฟล์ (ถ้ามี)
     file_context = st.session_state.chat_files.get(chat_id, "")
     if file_context:
         sys_msg = {
             "role": "system",
-            "content": f"""คุณจะได้รับข้อมูลจากเอกสารที่อัปโหลดดังนี้:\n\n{file_context[:3000]}\n\nโปรดตอบคำถามโดยอ้างอิงจากข้อมูลข้างต้นเท่านั้น หากไม่มีข้อมูลในเอกสารให้ตอบว่า \"ไม่พบข้อมูลที่เกี่ยวข้องในเอกสาร\"."""
+            "content": f"""คุณจะได้รับข้อมูลจากเอกสารที่อัปโหลดดังนี้:\n\n{file_context[:3000]}\n\n
+            โปรดตอบคำถามโดยอ้างอิงจากข้อมูลข้างต้นเท่านั้น หากไม่มีข้อมูลในเอกสารให้ตอบว่า "ไม่พบข้อมูลที่เกี่ยวข้องในเอกสาร"."""
         }
         full_messages = [sys_msg] + chat_history[1:]
     else:
@@ -214,6 +193,7 @@ if user_input:
     with st.spinner("กำลังคิดคำตอบ..."):
         headers = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
         payload = {"model": MODEL, "messages": full_messages, "temperature": 0.7}
+
         try:
             res = requests.post(API_URL, headers=headers, json=payload)
             reply = res.json()["choices"][0]["message"]["content"]
