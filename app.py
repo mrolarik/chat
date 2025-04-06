@@ -13,7 +13,7 @@ st.set_page_config(page_title="Groq Chatbot", page_icon="🤖")
 
 # ✅ Header ตรึงบนสุดแบบตรงกลาง
 st.markdown("""
-    <div style="position: fixed; top: 189px; left: 0; width: 100%; background-color: #f0f2f6;
+    <div style="position: fixed; top: 40; left: 0; width: 100%; background-color: #ffffff;
                 display: flex; justify-content: center; align-items: center;
                 padding: 1rem 1.5rem; font-size: 24px; font-weight: bold; color: #333;
                 z-index: 1000; border-bottom: 1px solid #ddd;">
@@ -23,7 +23,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # 🔐 Groq API
-API_KEY = "your-groq-api-key"  # 👈 เปลี่ยนตรงนี้
+API_KEY = "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"  # 👈 เปลี่ยนตรงนี้
 API_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL = "llama3-8b-8192"
 
