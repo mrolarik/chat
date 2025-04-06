@@ -98,7 +98,7 @@ if "select_chat" in st.query_params():
     selected = st.experimental_get_query_params()["select_chat"][0]
     st.session_state.current_chat = selected
     st.session_state.renaming = None
-    st.experimental_set_query_params()
+    st.experimental_set_query_params(select_chat=None)
     st.rerun()
 
 # ✏️ input เปลี่ยนชื่อหัวข้อ
