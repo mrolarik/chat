@@ -13,10 +13,16 @@ API_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL = "llama3-8b-8192"
 
 # เก็บประวัติการสนทนาใน session
-if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {"role": "system", "content": "คุณคือผู้ช่วยที่เป็นมิตรและมีประโยชน์"}
-    ]
+st.session_state.messages = [
+    {
+        "role": "system",
+        "content": (
+            "คุณคือผู้ช่วยที่เป็นมิตรและมีประโยชน์ "
+            "หากมีการเริ่มต้นบทสนทนา ให้แนะนำตัวว่า 'สวัสดีครับ! ฉันชื่อ junior Chatbot "
+            "ผู้ช่วยที่พร้อมจะตอบคำถามและช่วยเหลือคุณในเรื่องต่างๆ'"
+        )
+    }
+]
 
 # แสดงประวัติ
 for msg in st.session_state.messages[1:]:  # ข้าม system message
@@ -44,4 +50,3 @@ if user_input := st.chat_input("พิมพ์ข้อความของค
 
     st.chat_message("assistant").markdown(reply)
     st.session_state.messages.append({"role": "assistant", "content": reply})
-
