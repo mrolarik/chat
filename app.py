@@ -12,14 +12,14 @@ import pandas as pd
 st.set_page_config(page_title="Groq Chatbot", page_icon="🤖")
 
 # ✅ Header ตรึงบนสุดแบบตรงกลาง
-st.markdown("""
-    <div style="position: fixed; top: 10; left: 0; width: 100%; background-color: #ffffff;
-                display: flex; justify-content: center; align-items: center;
-                padding: 1rem 1.5rem; font-size: 24px; font-weight: bold; color: #333;
-                z-index: 1000; border-bottom: 1px solid #ddd;">
-        🤖 Junior Chatbot
-    </div>
-    <div style="margin-top: 25px;"></div>
+#st.markdown("""
+#    <div style="position: fixed; top: 10; left: 0; width: 100%; background-color: #ffffff;
+#                display: flex; justify-content: center; align-items: center;
+#                padding: 1rem 1.5rem; font-size: 24px; font-weight: bold; color: #333;
+#                z-index: 1000; border-bottom: 1px solid #ddd;">
+#        🤖 Junior Chatbot
+#    </div>
+#<div style="margin-top: 25px;"></div>
 """, unsafe_allow_html=True)
 
 # 🔐 Groq API
@@ -186,6 +186,7 @@ for msg in chat_history[1:]:
         st.markdown(msg["content"])
 
 # ✍️ รับข้อความผู้ใช้
+st.markdown("Chatbot")
 if user_input := st.chat_input("พิมพ์ข้อความของคุณที่นี่..."):
     st.session_state.last_user_msg = user_input
     with st.chat_message("user"):
