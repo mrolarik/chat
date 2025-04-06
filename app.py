@@ -53,7 +53,7 @@ if "renaming" not in st.session_state:
     st.session_state.renaming = None
 
 # Sidebar Header
-st.sidebar.title("## 🤖 Junior Chatbot")
+st.sidebar.title("🤖 Junior Chatbot")
 st.sidebar.markdown("---")
 st.sidebar.markdown("📂 หัวข้อแชท", unsafe_allow_html=True)
 
