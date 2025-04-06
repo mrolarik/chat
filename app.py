@@ -9,7 +9,7 @@ st.set_page_config(page_title="Groq Chatbot", page_icon="🤖")
 
 # ✅ Header ตรึงด้านบน ตรงกลาง และเลื่อนลง 5cm
 st.markdown("""
-    <div style="position: fixed; top: 189px; left: 0; width: 100%; background-color: #f0f2f6;
+    <div style="position: fixed; top: 60px; left: 0; width: 100%; background-color: #f0f2f6;
                 display: flex; justify-content: center; align-items: center;
                 padding: 1rem 1.5rem; font-size: 24px; font-weight: bold; color: #333;
                 z-index: 1000; border-bottom: 1px solid #ddd;">
@@ -94,7 +94,7 @@ for title in list(st.session_state.all_chats.keys()):
         st.rerun()
 
 # 📥 จัดการการเลือกหัวข้อ (จากปุ่มแบบ form ข้างบน)
-if "select_chat" in st.experimental_get_query_params():
+if "select_chat" in st.query_params():
     selected = st.experimental_get_query_params()["select_chat"][0]
     st.session_state.current_chat = selected
     st.session_state.renaming = None
