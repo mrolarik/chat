@@ -152,6 +152,7 @@ if uploaded_files:
 
     st.session_state.chat_files[chat_id] = all_text
     st.session_state.chat_summaries[chat_id] = summaries
+    st.markdown("---")
     st.success("✅ อัปโหลดและสรุปไฟล์ทั้งหมดสำเร็จแล้ว")
 
 # ✅ แสดงสรุปที่เคยอัปโหลด
