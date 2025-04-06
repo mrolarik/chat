@@ -53,9 +53,9 @@ if "renaming" not in st.session_state:
     st.session_state.renaming = None
 
 # Sidebar Header
-st.sidebar.markdown("## 🤖 Junior Chatbot", unsafe_allow_html=True)
+st.sidebar.title("## 🤖 Junior Chatbot", unsafe_allow_html=True)
 st.sidebar.markdown("---")
-st.sidebar.title("📂 หัวข้อแชท")
+st.sidebar.markdown("📂 หัวข้อแชท")
 
 if st.sidebar.button("➕ เริ่มแชทใหม่"):
     new_title = f"แชทเมื่อ {datetime.now().strftime('%H:%M:%S')}"
