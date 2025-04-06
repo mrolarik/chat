@@ -165,19 +165,8 @@ def is_english(text):
     return re.match(r'^[a-zA-Z0-9\s\.,!?]+$', text.strip()) is not None
 
 # 🤖 แนะนำตัวครั้งแรก
-if len(chat_history) == 1:
-    thai_greetings = [
-        "สวัสดีครับ! ฉันคือ junior Chatbot 😊 ยินดีช่วยเหลือคุณทุกเรื่องเลยครับ",
-        "สวัสดีครับ! ฉันชื่อ junior Chatbot 🤖 พร้อมช่วยคุณตอบคำถามทุกด้าน",
-        "สวัสดีครับ! junior Chatbot อยู่ตรงนี้แล้วนะครับ 🙌 ถามมาได้เลย"
-    ]
-    eng_greetings = [
-        "Hello! I am junior Chatbot 😊 How can I assist you today?",
-        "Hi there! This is junior Chatbot 🤖 Ask me anything!",
-        "Hey! I'm junior Chatbot 🙌 Ready to help!"
-    ]
-    msg = st.session_state.get("last_user_msg", "")
-    intro = random.choice(eng_greetings if is_english(msg) else thai_greetings)
+# แสดงแนะนำตัวเฉพาะเมื่อยังไม่มี assistant ตอบเลย
+if len(chat_history) == 1 or not any(m["role"] == "assistant" for m in chat_history[1:]):
     with st.chat_message("assistant"):
         st.markdown(intro)
     chat_history.append({"role": "assistant", "content": intro})
