@@ -2,3 +2,5 @@
 
 streamlit
 transformers
+groq
+requests
