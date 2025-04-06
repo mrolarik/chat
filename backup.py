@@ -137,3 +137,5 @@ if user_input := st.chat_input("พิมพ์ข้อความของค
     with st.chat_message("assistant"):
         st.markdown(reply)
     chat_history.append({"role": "assistant", "content": reply})
+
+
