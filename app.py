@@ -7,9 +7,10 @@ from datetime import datetime
 # 🛠️ ตั้งค่าหน้าเว็บ
 st.set_page_config(page_title="Groq Chatbot", page_icon="🤖")
 
-# ✅ Header ตรึงบนสุด
+# ✅ หัวข้อคงที่บนสุดแบบตรงกลาง
 st.markdown("""
-    <div style="position: fixed; top: 89px; left: 0; width: 100%; background-color: #f0f2f6;
+    <div style="position: fixed; top: 189px; left: 0; width: 100%; background-color: #f0f2f6;
+                display: flex; justify-content: center; align-items: center;
                 padding: 1rem 1.5rem; font-size: 24px; font-weight: bold; color: #333;
                 z-index: 1000; border-bottom: 1px solid #ddd;">
         🤖 Junior Chatbot
